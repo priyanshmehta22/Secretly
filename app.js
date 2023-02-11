@@ -110,6 +110,7 @@ app.get("/secrets", (req, res) => {
 
 app.get("/submit", (req, res) => {
     if (req.isAuthenticated()) {
+        console.log("authenticated");
         res.render("submit");
     }
     else {
