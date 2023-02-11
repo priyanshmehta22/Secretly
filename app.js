@@ -114,6 +114,7 @@ app.get("/submit", (req, res) => {
         res.render("submit");
     }
     else {
+        console.log("not authenticated");
         res.redirect("/login");
     }
 })
