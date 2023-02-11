@@ -11,8 +11,7 @@ const passportLocalMongoose = require('passport-local-mongoose');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const findOrCreate = require('mongoose-findorcreate');
 
-// const encrypt = require("mongoose-encryption");
-// const bcrypt = require("bcrypt");
+
 
 const app = express();
 
@@ -30,7 +29,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true });
 mongoose.set('strictQuery', true);
 app.get("/", function (req, res) {
     res.render("home");
@@ -49,7 +48,6 @@ const userSchema = new mongoose.Schema({
 userSchema.plugin(passportLocalMongoose);
 userSchema.plugin(findOrCreate);
 
-// userSchema.plugin(encrypt, {secret:process.env.MONGO_SECRET_KEY, encryptedFields: ["password"]});
 
 const User = new mongoose.model("User", userSchema);
 
