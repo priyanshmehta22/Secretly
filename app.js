@@ -87,11 +87,8 @@ app.get("/login", function (req, res) {
 app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-app.get("/auth/google/secretly", passport.authenticate("google", { failureRedirect: "/login" }),
-    function (req, res) {
-        // Successful authentication, redirect secrets.
-        res.redirect("/secrets");
-    });
+app.get("/auth/google/secretly", passport.authenticate("google", { failureRedirect: "/login", successRedirect: "/secrets" })
+);
 
 app.get("/register", function (req, res) {
     res.render("register");
