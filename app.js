@@ -67,11 +67,12 @@ passport.use(new GoogleStrategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
     callbackURL: "https://secretly.up.railway.app/auth/google/secretly",
+    // callbackURL: "http://localhost:3000/auth/google/secretly",
     userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
 },
     function (accessToken, refreshToken, profile, cb) {
         console.log(profile);
-        User.findOrCreate({ googleId: profile.id }, function (err, user) {
+        User.findOrCreate({ username: profile.emails[0].value, googleId: profile.id, age: profile.age }, function (err, user) {
             return cb(err, user);
         });
     }
@@ -82,7 +83,7 @@ app.get("/login", function (req, res) {
 });
 
 
-app.get("/auth/google", passport.authenticate("google", { scope: ["profile"] })
+app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
 app.get("/auth/google/secretly", passport.authenticate("google", { failureRedirect: "/login" }),
@@ -109,7 +110,7 @@ app.get("/secrets", (req, res) => {
 });
 
 app.get("/submit", (req, res) => {
-    if (req.isAuthenticated()) {
+    if (passport.authenticate("google") || passport.authenticate("local")) {
         console.log("authenticated");
         res.render("submit");
     }
@@ -146,21 +147,23 @@ app.post("/register", (req, res) => {
 
 app.post("/submit", (req, res) => {
     const submittedSecret = req.body.secret;
-    console.log(req.user.id);
+    console.log("user id: " + req.user.id);
     User.findById(req.user.id, (err, foundUser) => {
         if (err) {
             console.log(err);
         }
         else {
             if (foundUser) {
-                foundUser.secret = submittedSecret;
+                foundUser.secret.push(submittedSecret);
+
                 foundUser.save(() => {
                     res.redirect("/secrets");
-                });
+                })
             }
         }
     })
 })
+
 
 
 app.post("/login", (req, res) => {
@@ -173,7 +176,9 @@ app.post("/login", (req, res) => {
             console.log(err);
         }
         else {
+            console.log("id: " + req.user.id);
             passport.authenticate("local");
+            console.log("authenticated");
             res.redirect("/secrets");
         }
     })
