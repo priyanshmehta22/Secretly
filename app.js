@@ -68,7 +68,8 @@ passport.use(new GoogleStrategy({
     clientSecret: process.env.CLIENT_SECRET,
     callbackURL: "https://secretly.up.railway.app/auth/google/secretly",
     // callbackURL: "http://localhost:3000/auth/google/secretly",
-    userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
+    userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
+    passReqToCallback: true
 },
     function (accessToken, refreshToken, profile, cb) {
         console.log(profile);
@@ -138,7 +139,7 @@ app.post("/register", (req, res) => {
             res.redirect("/register");
         }
         else {
-            passport.authenticate("local")(req, res, () => {
+            passport.authenticate("local", "google")(req, res, () => {
                 res.redirect("/secrets");
             })
         }
