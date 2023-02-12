@@ -108,7 +108,7 @@ app.get("/secrets", (req, res) => {
 });
 
 app.get("/submit", (req, res) => {
-    if (passport.authenticate("google") || passport.authenticate("local")) {
+    if (req.isAuthenticated() || passport.authenticate("local") || passport.authenticate("google")) {
         console.log("authenticated");
         res.render("submit");
     }
