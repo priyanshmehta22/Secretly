@@ -145,7 +145,7 @@ app.post("/register", (req, res) => {
 
 app.post("/submit", (req, res) => {
     const submittedSecret = req.body.secret;
-    console.log("user id: " + req.user.id);
+    // console.log("user id: " + req.user.id);
     User.findById(req.user.id, (err, foundUser) => {
         if (err) {
             console.log(err);
